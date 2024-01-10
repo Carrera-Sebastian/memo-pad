@@ -6,9 +6,6 @@
 }
 .header-content{
     position: fixed;
-    /*display: block;
-    top: 0;
-    left: 0;*/
     width: 20%;
     height: 100vh;
     background-color: #c7cac2;
@@ -25,6 +22,7 @@ header{
 .header-button {
     position: relative;
     display: inline-block;
+    margin-top: 35px;
     padding: 12px 24px;
     border: none;
     font-size: 16px;
@@ -34,6 +32,11 @@ header{
     cursor: pointer;
     overflow: hidden;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    color: white;
+    text-decoration: none;
+}
+.header-button:active{
+    color:black;
 }
 main{
     margin-left: 20%;

@@ -4,12 +4,12 @@ const {createNote, readNote, updateNote, deleteNote} = require('../controllers/n
 
 const router = Router();
 
-router.get('/:id', readNote);
+router.get('/', readNote);
 
 router.post('/', createNote);
 
-router.put('/', updateNote);
+router.put('/:id', updateNote);
 
-router.delete('/', deleteNote);
+router.delete('/:id', deleteNote);
 
 module.exports = router;
