@@ -3,30 +3,25 @@ const mysql2 = require('mysql2');
 
 //CRUD
 const readNote = (req, res) => {
-    //const {id} = req.params;
-    const readQuery = `SELECT * FROM note ;`;
+    const {archived} = req.query;
+    const readQuery = `SELECT * FROM note WHERE archived = ${archived};`;
+
     const query = mysql2.format(readQuery);
 
-    database.query(query, (err, result) =>{
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: 'Error al leer las notas' });
-            return;
-        }
-        res.json(result);
+    database.query(readQuery, (err, result) =>{
+        if (err) throw err;
+            res.json(result);
     });
 };
 
 const createNote = (req, res) => {
     const {body, tag} = req.body;
-    const createQuery = `INSERT INTO note (body, tag) VALUE(?,?);`;
+    const createQuery = `INSERT INTO note (body, tag, archived) VALUE(?,?,0);`;
 
     const query = mysql2.format(createQuery, [body, tag]);
 
     database.query(query, (err, result) =>{
         if (err) throw err;
-        //console.log(result);
-        //res.send({message: 'note created'});
         const iden = result.insertId;
         res.status(201).send({id:iden, message: 'Nota creada con exito'});
     })

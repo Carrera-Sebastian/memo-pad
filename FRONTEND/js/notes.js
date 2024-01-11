@@ -1,4 +1,7 @@
-window.onload = loadNotes;
+window.onload = function() { 
+    loadNotes();
+    loadArchivedNotes();
+};
 
 document.getElementById('saveButton').addEventListener('click', function() {
     var noteText = document.getElementById('noteInput').value;
@@ -6,7 +9,7 @@ document.getElementById('saveButton').addEventListener('click', function() {
         alert('Por favor, escribe algo en la nota.');
         return;
     }
-    // Lo siguiente guarda la nota en el "ORM"
+
     var tags = noteText.match(/#[\w]+/g);
     var tag = tags ? tags[0] : ''; // Considera el primer hashtag como tag
     
@@ -76,6 +79,12 @@ document.getElementById('notesContainer').addEventListener('click', function(eve
                 .then(response => response.json())
                 .then(data => {
                     alert('Nota actualizada:', data);
+                    if (originalTag && originalTag !== newTag && !hasOtherNotesWithSameTag(originalTag, noteId)){
+                        var tagDivToRemove = document.querySelector(`[data-tag-filter="${originalTag}"]`);
+                        if (tagDivToRemove){
+                            tagDivToRemove.remove();
+                        }
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -109,16 +118,46 @@ document.getElementById('notesContainer').addEventListener('click', function(eve
             .catch((error) => {
                 console.error('Error:', error);
             });
+
+        }else if (clickedElement.textContent === 'Archivar' || clickedElement.textContent === 'Desarchivar'){
+            const archivedStatus = clickedElement.textContent === 'Archivar';
+
+
+            fetch(`http://127.0.0.1:3000/note/archived/${noteId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ archived: archivedStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Nota actualizada:', data);
+                clickedElement.textContent = archivedStatus ? 'Archivar' : 'Desarchivar';
+                noteDiv.remove();
+            })
+            .catch(error => console.error('Error:', error));
         }
     }
 });
 
 function loadNotes() {
-    fetch('http://127.0.0.1:3000/note') // Asegúrate de que esta URL sea la correcta para tu API
+    fetch('http://127.0.0.1:3000/note?archived=false') // Asegúrate de que esta URL sea la correcta para tu API
         .then(response => response.json())
         .then(data => {
             data.forEach(note => {
-                addNoteToDOM(note.id, note.body);
+                addNoteToDOM(note.id, note.body, note.archived);
+                updateTagsInSidebar(note.body);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+function loadArchivedNotes() {
+    fetch('http://127.0.0.1:3000/note?archived=true')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(note => {
+                addArchivedNoteToDOM(note.id, note.body, note.archived);
                 updateTagsInSidebar(note.body);
             });
         })
@@ -126,7 +165,9 @@ function loadNotes() {
 }
 
 //Creación de nota en el DOM
-function addNoteToDOM(id, noteText) {
+function addNoteToDOM(id, noteText, archived = false) { //paso valor cuando creo otra funcion para llenar las archivadas
+    if (archived) return;
+    
     var noteDiv = document.createElement('div');
     noteDiv.classList.add('note');
     noteDiv.setAttribute('data-note-id', id);
@@ -136,18 +177,76 @@ function addNoteToDOM(id, noteText) {
 
     var editButton = document.createElement('button');
     editButton.textContent = 'Edit';
-    // Añade una clase o id si es necesario para estilos
 
     var deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
-    // Añade una clase o id si es necesario para estilos
+
+    var archiveButton = document.createElement('button');
+    archiveButton.textContent = 'Archivar'; //archived ? 'Desarchivar' : 
 
     noteDiv.appendChild(noteTextDiv);
     noteDiv.appendChild(editButton);
     noteDiv.appendChild(deleteButton);
 
+    archiveButton.addEventListener('click', function(){
+        // Envía una solicitud PUT para actualizar el estado archivado de la nota
+        fetch(`http://127.0.0.1:3000/note/archived/${noteId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ archived: true}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            noteDiv.remove();
+            addArchivedNoteToDOM(id, noteText, true)
+        })
+        .catch(error => console.error('Error:', error));
+        })
+
+    noteDiv.appendChild(archiveButton);
+
     document.getElementById('notesContainer').appendChild(noteDiv);
     }
+
+    function addArchivedNoteToDOM(id, noteText, archived = true) {
+        if (!archived) return;
+        var noteDiv = document.createElement('div');
+        noteDiv.classList.add('note');
+        noteDiv.setAttribute('data-note-id', id);
+    
+        var noteTextDiv = document.createElement('div');
+        noteTextDiv.textContent = noteText;
+    
+        var unarchiveButton = document.createElement('button');
+        unarchiveButton.textContent = 'Desarchivar';
+    
+        // Agrega el botón de desarchivar
+        unarchiveButton.addEventListener('click', function(){
+            fetch(`http://127.0.0.1:3000/note/archived/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ archived: false }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                noteDiv.remove();
+                addNoteToDOM(id, noteText, false);
+            })
+            .catch(error => console.error('Error:', error));
+            })
+    
+        noteDiv.appendChild(noteTextDiv);
+        noteDiv.appendChild(unarchiveButton);
+    
+        document.getElementById('archivedNotesContainer').appendChild(noteDiv);
+    }
+    
 
 function filterNotes(tag) {
     var notes = document.querySelectorAll('.note');
@@ -169,7 +268,6 @@ function hasOtherNotesWithSameTag(tag, excludingNoteId) {
                noteTag === tag;
     });
 }
-
 
 function addTagToSidebar(tag) {
     var tagDiv = document.createElement('div');
