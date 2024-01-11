@@ -1,10 +1,7 @@
-window.onload = function() { 
-    loadNotes();
-    loadArchivedNotes();
-};
-
 document.getElementById('saveButton').addEventListener('click', function() {
     var noteText = document.getElementById('noteInput').value;
+    var categorieId = document.getElementById('categ').value;
+    
     if (noteText.trim() === '') {
         alert('Por favor, escribe algo en la nota.');
         return;
@@ -18,7 +15,7 @@ document.getElementById('saveButton').addEventListener('click', function() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ body: noteText, tag: tag }),
+        body: JSON.stringify({ body: noteText, tag: tag, categorie_id: categorieId }),
     })
     .then(response => response.json())
     .then(data => {
@@ -95,7 +92,8 @@ document.getElementById('notesContainer').addEventListener('click', function(eve
                 }
             }
         } else if (clickedElement.textContent === 'Delete') {
-            var tagToRemove = noteDiv.textContent.match(/#[\w]+/g)[0].toLowerCase();
+            var tagMatches = noteDiv.textContent.match(/#[\w]+/g);
+            var tagToRemove = tagMatches ? tagMatches[0].toLowerCase() : null;
             //Logica para eliminar
             fetch(`http://127.0.0.1:3000/note/${noteId}`, {
                 method: 'DELETE',
@@ -142,12 +140,12 @@ document.getElementById('notesContainer').addEventListener('click', function(eve
 });
 
 function loadNotes() {
-    fetch('http://127.0.0.1:3000/note?archived=false') // Asegúrate de que esta URL sea la correcta para tu API
+    fetch('http://127.0.0.1:3000/note?archived=false')
         .then(response => response.json())
         .then(data => {
             data.forEach(note => {
-                addNoteToDOM(note.id, note.body, note.archived);
-                updateTagsInSidebar(note.body);
+                addNoteToDOM(note.id, note.body, note.categorie_id, note.archived);
+                updateTagsInSidebar();
             });
         })
         .catch(error => console.error('Error:', error));
@@ -158,19 +156,20 @@ function loadArchivedNotes() {
         .then(data => {
             data.forEach(note => {
                 addArchivedNoteToDOM(note.id, note.body, note.archived);
-                updateTagsInSidebar(note.body);
+                updateTagsInSidebar();
             });
         })
         .catch(error => console.error('Error:', error));
 }
 
 //Creación de nota en el DOM
-function addNoteToDOM(id, noteText, archived = false) { //paso valor cuando creo otra funcion para llenar las archivadas
+function addNoteToDOM(id, noteText, categoryId, archived = false) { 
     if (archived) return;
     
     var noteDiv = document.createElement('div');
     noteDiv.classList.add('note');
     noteDiv.setAttribute('data-note-id', id);
+    noteDiv.setAttribute('data-category-id', categoryId); // I add category id to each note
 
     var noteTextDiv = document.createElement('div');
     noteTextDiv.textContent = noteText;
@@ -182,7 +181,7 @@ function addNoteToDOM(id, noteText, archived = false) { //paso valor cuando creo
     deleteButton.textContent = 'Delete';
 
     var archiveButton = document.createElement('button');
-    archiveButton.textContent = 'Archivar'; //archived ? 'Desarchivar' : 
+    archiveButton.textContent = 'Archivar'; //archived ? 'Desarchivar' :
 
     noteDiv.appendChild(noteTextDiv);
     noteDiv.appendChild(editButton);
@@ -247,52 +246,3 @@ function addNoteToDOM(id, noteText, archived = false) { //paso valor cuando creo
         document.getElementById('archivedNotesContainer').appendChild(noteDiv);
     }
     
-
-function filterNotes(tag) {
-    var notes = document.querySelectorAll('.note');
-    notes.forEach(note => {
-        if (note.textContent.includes(tag)) {
-            note.style.display = 'block';
-        } else {
-            note.style.display = 'none';
-        }
-    });
-}
-
-function hasOtherNotesWithSameTag(tag, excludingNoteId) {
-    var notes = document.querySelectorAll('.note');
-    return Array.from(notes).some(note => {
-        var noteTag = note.textContent.match(/#[\w]+/g);
-        noteTag = noteTag ? noteTag[0].toLowerCase() : '';
-        return note.getAttribute('data-note-id') !== excludingNoteId &&
-               noteTag === tag;
-    });
-}
-
-function addTagToSidebar(tag) {
-    var tagDiv = document.createElement('div');
-    tagDiv.textContent = tag;
-    tagDiv.setAttribute('data-tag-filter', tag);
-    tagDiv.addEventListener('click', function() {
-        filterNotes(tag);
-    });
-    document.getElementById('tagsContainer').appendChild(tagDiv);
-}
-
-function updateTagsInSidebar(noteText) {
-    var tags = noteText.match(/#[\w]+/g);
-    if (tags) {
-        tags.forEach(function(tag) {
-            var normalizedTag = tag.toLowerCase();
-            if (!document.querySelector(`[data-tag-filter="${normalizedTag}"]`)) {
-                var tagDiv = document.createElement('div');
-                tagDiv.textContent = normalizedTag;
-                tagDiv.setAttribute('data-tag-filter', normalizedTag);
-                tagDiv.addEventListener('click', function() {
-                    filterNotes(normalizedTag);
-                });
-                document.getElementById('tagsContainer').appendChild(tagDiv);
-            }
-        });
-    }
-}

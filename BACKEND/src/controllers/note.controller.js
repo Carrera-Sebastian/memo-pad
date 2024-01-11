@@ -8,17 +8,17 @@ const readNote = (req, res) => {
 
     const query = mysql2.format(readQuery);
 
-    database.query(readQuery, (err, result) =>{
+    database.query(query, (err, result) =>{
         if (err) throw err;
-            res.json(result);
+        res.json(result);
     });
 };
 
 const createNote = (req, res) => {
-    const {body, tag} = req.body;
-    const createQuery = `INSERT INTO note (body, tag, archived) VALUE(?,?,0);`;
+    const {body, tag, categorie_id} = req.body;
+    const createQuery = `INSERT INTO note (body, tag, categorie_id, archived) VALUE(?,?,?,0);`;
 
-    const query = mysql2.format(createQuery, [body, tag]);
+    const query = mysql2.format(createQuery, [body, tag, categorie_id]);
 
     database.query(query, (err, result) =>{
         if (err) throw err;

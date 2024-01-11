@@ -11,10 +11,10 @@
     <div class="app">
         <div class="header-content">
             <header>
-                <a class="header-button" href="#"><img src="img/home-icon.png" width="20px" alt="">  Home</a>
-                <a class="header-button" href="#"><img src="img/profile-icon.png" width="20px" alt="">  Profile</a>
+                <a class="header-button" href="#"><img src="img/home-icon.png" width="20px" alt="Home">  Home</a>
+                <a class="header-button" href="#"><img src="img/profile-icon.png" width="20px" alt="Profile">  Profile</a>
                 <a class="header-button" href="/FRONTEND/archived.html"><img src="img/archived-icon.png" width="20px" alt="">  Archived</a>
-                <a class="header-button" href="#"><img src="img/settings-icon.png" width="20px" alt="">  Settings</a>
+                <a class="header-button" href="#"><img src="img/settings-icon.png" width="20px" alt="Settings">  Settings</a>
             </header>
         </div>
         <main>
@@ -22,6 +22,12 @@
                 <h1 style="text-align: center;">Notes</h1>
                 <div class="new-note">
                     <textarea name="noteInputPost" id="noteInput" rows="2" placeholder="Write your ideas..." style="height: 48px;"></textarea>
+                    <div>
+                        <label for="categ">Categoria: </label>
+                        <select name="categorie" id="categ">
+
+                        </select>
+                    </div>
                     <div style="align-self: flex-end;">
                         <button class="buttonSaveNote" id="saveButton">Save</button>
                     </div>
@@ -29,16 +35,28 @@
                 </div>
             </div>
             <div class="sidebar">
-                <h4 style="text-align: center;">Panel de busqueda</h4>
-                <div class="busqueda">
-                    <img src="img/search-icon.png" width="36px" alt="search"><input type="text" class="form-control" placeholder="Search notes" aria-label="Username" aria-describedby="basic-addon1">
-                </div>
+                <h4 style="text-align: center;">Filter panel</h4>
                 <h4 style="padding-top: 20px;">Tags #</h4>
                 <div id="tagsContainer"></div>
+                <h4 style="padding-top: 30px;">Categories</h4>
+                <div id="categoriesContainer">
+                    <select class="form-control" id="categFilter" name="categorieFilter"> 
+                        <option value="all">Todas</option>
+                    </select>
+                    <button class="buttonSaveNote" id="filterCategoryButton">Filter</button>
+                </div>
             </div>
 
         </main>
     </div>
 </body>
 <script src="/FRONTEND/js/notes.js"></script>
+<script src="/FRONTEND//js/categories.js"></script>
+<script src="/FRONTEND//js/tags.js"></script>
+<script>
+    window.onload = function() { 
+    loadNotes();
+    loadCategories();
+};
+</script>
 </html>

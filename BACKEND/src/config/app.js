@@ -4,6 +4,7 @@ const cors = require('cors');
 const noteRoutes = require('../routes/note.routes');
 const userRoutes = require('../routes/user.routes');
 const archNoteRoutes = require('../routes/archivedNote.routes');
+const catRoutes = require('../routes/categorie.routes');
 
 const app = express();
 app.use(express.json());
@@ -14,5 +15,6 @@ app.use(cors());
 app.use('/note', noteRoutes);
 app.use('/user', userRoutes);
 app.use('/note/archived', archNoteRoutes);
+app.use('/categorie', catRoutes);
 
 module.exports = app;
