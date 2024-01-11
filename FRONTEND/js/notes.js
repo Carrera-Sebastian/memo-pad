@@ -3,7 +3,7 @@ document.getElementById('saveButton').addEventListener('click', function() {
     var categorieId = document.getElementById('categ').value;
     
     if (noteText.trim() === '') {
-        alert('Por favor, escribe algo en la nota.');
+        alert('Please, escribe algo en la nota.');
         return;
     }
 
@@ -176,12 +176,14 @@ function addNoteToDOM(id, noteText, categoryId, archived = false) {
 
     var editButton = document.createElement('button');
     editButton.textContent = 'Edit';
+    editButton.className = 'btn btn-outline-primary';
 
     var deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
+    deleteButton.className = 'btn btn-outline-danger';
 
     var archiveButton = document.createElement('button');
-    archiveButton.textContent = 'Archivar'; //archived ? 'Desarchivar' :
+    archiveButton.textContent = 'Archivar'; //archived ? 'Desarchivar':
 
     noteDiv.appendChild(noteTextDiv);
     noteDiv.appendChild(editButton);
@@ -204,7 +206,7 @@ function addNoteToDOM(id, noteText, categoryId, archived = false) {
         })
         .catch(error => console.error('Error:', error));
         })
-
+    archiveButton.className = 'btn btn-outline-warning';
     noteDiv.appendChild(archiveButton);
 
     document.getElementById('notesContainer').appendChild(noteDiv);
@@ -221,6 +223,7 @@ function addNoteToDOM(id, noteText, categoryId, archived = false) {
     
         var unarchiveButton = document.createElement('button');
         unarchiveButton.textContent = 'Desarchivar';
+        unarchiveButton.className = 'btn btn-outline-warning'
     
         // Agrega el botón de desarchivar
         unarchiveButton.addEventListener('click', function(){

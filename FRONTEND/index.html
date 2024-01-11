@@ -21,18 +21,22 @@
             <div class="main-content">
                 <h1 style="text-align: center;">Notes</h1>
                 <div class="new-note">
-                    <textarea name="noteInputPost" id="noteInput" rows="2" placeholder="Write your ideas..." style="height: 48px;"></textarea>
-                    <div>
-                        <label for="categ">Categoria: </label>
-                        <select name="categorie" id="categ">
+                    <textarea name="noteInputPost" id="noteInput" rows="3" placeholder="Write your ideas..." style="height: 72px;"></textarea>
+                    <div class="d-flex align-items-left">
+                        <label for="categ" class="me-2">Categoria: </label>
+                        <select name="categorie" id="categ" class="form-select" style="width: auto;">
 
                         </select>
                     </div>
                     <div style="align-self: flex-end;">
-                        <button class="buttonSaveNote" id="saveButton">Save</button>
+                        <button class="btn btn-outline-success" id="saveButton">Save</button>
                     </div>
-                    <div id="notesContainer"></div>
                 </div>
+                <div class="new-categories d-flex align-items-left" style="margin-top: 30px;">
+                    <input class="form-control" style="width: auto; margin-right: 20px;" type="text" id="newCategoryName" placeholder="New category...">
+                    <button class="btn btn-outline-info" id="addCategoryButton">Add Category</button>
+                </div>
+                <div id="notesContainer"></div>
             </div>
             <div class="sidebar">
                 <h4 style="text-align: center;">Filter panel</h4>
@@ -40,10 +44,15 @@
                 <div id="tagsContainer"></div>
                 <h4 style="padding-top: 30px;">Categories</h4>
                 <div id="categoriesContainer">
-                    <select class="form-control" id="categFilter" name="categorieFilter"> 
+                    <select class="form-select" style="width: auto " id="categFilter" name="categorieFilter"> 
                         <option value="all">Todas</option>
                     </select>
-                    <button class="buttonSaveNote" id="filterCategoryButton">Filter</button>
+                    <button style="margin-top: 20px;" class="btn btn-outline-info" id="filterCategoryButton">Filter</button>
+                </div>
+                <div>
+                    <ul id="categoriesList">
+                        <li>Estatico</li>
+                    </ul>
                 </div>
             </div>
 
