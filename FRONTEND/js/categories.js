@@ -1,3 +1,4 @@
+let categories = [];
 
 function loadCategories(){
     fetch('http://127.0.0.1:3000/categorie')
