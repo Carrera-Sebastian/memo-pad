@@ -1,6 +1,6 @@
-create database bd_app_notes2;
+create database bd_app_notes;
 
-use bd_app_notes2;
+use bd_app_notes;
 
 create table if not exists categories
 (

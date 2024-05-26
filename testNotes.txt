@@ -1,0 +1,26 @@
+Testing
+
+Archivar/desarchivar: no cambia los tags apenas realizas la accion, lo hace al recargar pagina
+Delete: Idem
+--- Al editar si lo hace en el momento al cambio de tag
+
+-No anda nodemon
+
+Falta:
+
+- Falta UI para borrar y agregar categorias
+
+- Historias de usuarios
+Como usuario, quiero poder agregar/eliminar categorías a las notas.
+
+- Incluya un script bash/zsh que permita ejecutar la aplicación. Idealmente, la aplicación debería iniciarse en un 
+entorno Linux/macOS simplemente ejecutando un comando. Este comando debería configurar todo lo necesario para 
+ejecutar la aplicación, como configurar un esquema de base de datos, crear previamente cualquier archivo de 
+configuración, etc.
+- Incluya un archivo README.md que describa todos los tiempos de ejecución, motores, herramientas, etc., necesarios 
+para ejecutar la aplicación, con sus versiones concretas (por ejemplo, npm 18.17, etc.).
+
+-- Iniciar sesión: si proporciona una pantalla de inicio de sesión, documente el usuario/contraseña
+ predeterminados en README.md.
+-- Live deployed version: If you deploy the app (e.g., via Heroku), add the URL of the live running 
+version to README.md.

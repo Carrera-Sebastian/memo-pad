@@ -52,7 +52,6 @@ document.getElementById('addCategoryButton').addEventListener('click', () => {
     if (categoryName) {
         // Aquí agregas la categoría a tu almacenamiento de categorías
         addCategory(categoryName);
-        updateCategorySelects();
         document.getElementById('newCategoryName').value = ''; // Limpiar campo
         alert('New category added');
     }
@@ -71,6 +70,7 @@ function addCategory(categoryName) {
     .then(data => {
         categories.push({ id: data.id, name: categoryName });
         updateCategorySelects();
+        displayCategoriesWithDeleteButton(categories); //actualiza la lista en el sidebar
     })
     .catch(error => console.error('Error:', error));
 }
@@ -110,9 +110,9 @@ function deleteCategory(categoryId) {
 
 function displayCategoriesWithDeleteButton(categories) {
     const categoriesList = document.getElementById('categoriesList');
-    categoriesList.innerHTML = ''; // Clean existing list
-
+    //categoriesList.innerHTML = ''; // Clean existing list
     categories.forEach(category => {
+        if (!categoriesList.querySelector(`[data-category-id="${category.id}"]`)) {
         const listItem = document.createElement('li');
         listItem.textContent = category.name;
 
@@ -126,5 +126,6 @@ function displayCategoriesWithDeleteButton(categories) {
         listItem.appendChild(deleteCategoryButton);
 
         categoriesList.appendChild(listItem);
+    }
     });
 }
